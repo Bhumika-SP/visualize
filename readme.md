@@ -1,38 +1,25 @@
-# Visualizing AgentTorch Simulations
-
-This module provides a Python API that works seamlessly with AgentTorch
-to visualize a simulation using the trajectory of its state.
-
-The various supported types of visualizations are described below. To
-request/add a new visualization, please open a pull request or an issue.
-
-## GeoPlot
-
-This visualization renders a 3-D plot of the data given the state
-trajectory of a simulation, and the path of the property to render.
-
-It generates an HTML file that contains code to render the plot using
-Cesium Ion, and the GeoJSON file of data provided to the plot.
-
-An example of its usage is as follows:
-
-```py
 from agent_torch.visualize import GeoPlot
 
-# create a simulation
-# ...
+# Initialize your simulation config (contains metadata like number of episodes, steps per episode, etc.)
+# config = ...
 
-# create a visualizer
+# Set your Cesium Ion access token for 3D globe visualization
+cesium_token = "your_cesium_ion_token"
+
+# Create a visualizer instance with simulation config and Cesium access token
 geoplot = GeoPlot(config, cesium_token)
 
-# visualize in the runner-loop
+# Run the simulation loop
 for i in range(0, num_episodes):
+  # Advance the simulation by a set number of steps
   runner.step(num_steps_per_episode)
 
+  # Generate a 3D geospatial visualization from the state trajectory
+  # 'entity_position' is the path to the coordinates (latitude, longitude)
+  # 'entity_property' is the path to the value you want to visualize (e.g., money spent)
   geoplot.visualize(
-    name = f"consumer-money-spent-{i}",
-    state_trajectory = runner.state_trajectory,
-    entity_position = "consumers/coordinates",
-    entity_property = "consumers/money_spent",
+    name = f"consumer-money-spent-{i}",  # Output file name (HTML + GeoJSON)
+    state_trajectory = runner.state_trajectory,  # List of simulation states over time
+    entity_position = "consumers/coordinates",  # Path to coordinates in the state dictionary
+    entity_property = "consumers/money_spent",  # Path to the property being visualized
   )
-```
